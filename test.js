@@ -1,21 +1,23 @@
-// import { Navigation } from 'react-native-navigation';
-// import AuthScreen from "./src/screens/Auth/AuthScreen";
-
-// Navigation.registerComponent("awesome-places.AuthScreen", () => AuthScreen);
-
 import React, { Component } from "react";
-import { View, StyleSheet, Text, Dimensions } from "react-native";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-import { Button } from "react-native";
+import {
+  View,
+  Image,
+  Button,
+  StyleSheet,
+  Text,
+  Dimensions
+} from "react-native";
+import MapView from "react-native-maps";
 
-class App extends Component {
+class PickLocation extends Component {
   state = {
     focusedLocation: {
       latitude: 37.7900352,
       longitude: -122.4013726,
       latitudeDelta: 0.0122,
       longitudeDelta:
-        (Dimensions.get("window").width / Dimensions.get("window").height) *
+        Dimensions.get("window").width /
+        Dimensions.get("window").height *
         0.0122
     },
     locationChosen: false
@@ -41,24 +43,22 @@ class App extends Component {
   };
 
   getLocationHandler = () => {
-    navigator.geolocation.getCurrentPosition(
-      pos => {
-        const coordsEvent = {
-          nativeEvent: {
-            coordinate: {
-              latitude: pos.coords.latitude,
-              longitude: pos.coords.longitude
-            }
+    navigator.geolocation.getCurrentPosition(pos => {
+      const coordsEvent = {
+        nativeEvent: {
+          coordinate: {
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude
           }
-        };
-        this.pickLocationHandler(coordsEvent);
-      },
-      err => {
-        console.log(err);
-        alert("Fetching the Position failed, please pick one manually!");
-      }
-    );
-  };
+        }
+      };
+      this.pickLocationHandler(coordsEvent);
+    },
+  err => {
+    console.log(err);
+    alert("Fetching the Position failed, please pick one manually!");
+  })
+  }
 
   render() {
     let marker = null;
@@ -66,13 +66,14 @@ class App extends Component {
     if (this.state.locationChosen) {
       marker = <MapView.Marker coordinate={this.state.focusedLocation} />;
     }
+
     return (
       <View style={styles.container}>
         <MapView
           initialRegion={this.state.focusedLocation}
           style={styles.map}
           onPress={this.pickLocationHandler}
-          ref={ref => (this.map = ref)}
+          ref={ref => this.map = ref}
         >
           {marker}
         </MapView>
@@ -86,7 +87,6 @@ class App extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 50,
     width: "100%",
     alignItems: "center"
   },
@@ -99,4 +99,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default App;
+export default PickLocation;
